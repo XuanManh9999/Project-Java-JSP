@@ -1,0 +1,53 @@
+package com.app.app_website_do_luu_niem.controller.auth;
+
+import com.app.app_website_do_luu_niem.service.AuthService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+@WebServlet(name = "registerServlet", urlPatterns = "/register")
+public class RegisterServlet extends HttpServlet {
+
+    private final AuthService authService = new AuthService();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String fullName = req.getParameter("fullName");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
+
+        if (fullName == null || fullName.isBlank() ||
+                email == null || email.isBlank() ||
+                password == null || password.isBlank()) {
+            req.setAttribute("error", "Vui lòng nhập đầy đủ thông tin.");
+            req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            req.setAttribute("error", "Mật khẩu nhập lại không khớp.");
+            req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
+            return;
+        }
+
+        boolean success = authService.register(fullName, email, password);
+        if (!success) {
+            req.setAttribute("error", "Email đã được sử dụng, vui lòng chọn email khác.");
+            req.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(req, resp);
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/login");
+        }
+    }
+}
+
+
