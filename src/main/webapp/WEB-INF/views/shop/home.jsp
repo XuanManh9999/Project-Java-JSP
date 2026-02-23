@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="pageTitle" value="Trang chủ"/>
 <%@ include file="/WEB-INF/views/layout/header.jspf" %>
 
@@ -39,7 +40,12 @@
                             <div class="card-img-wrapper">
                                 <c:choose>
                                     <c:when test="${not empty p.imageUrl}">
-                                        <img src="${p.imageUrl.startsWith('http') ? p.imageUrl : pageContext.request.contextPath.concat('/').concat(p.imageUrl)}" class="card-img-top" alt="<c:out value="${p.name}"/>"
+                                        <img src="${fn:startsWith(p.imageUrl, 'data:') 
+                                                   ? p.imageUrl 
+                                                   : (fn:startsWith(p.imageUrl, 'http') 
+                                                        ? p.imageUrl 
+                                                        : pageContext.request.contextPath.concat('/').concat(p.imageUrl))}" 
+                                             class="card-img-top" alt="<c:out value="${p.name}"/>"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <div class="img-placeholder" style="display:none;">&#127921;</div>
                                     </c:when>

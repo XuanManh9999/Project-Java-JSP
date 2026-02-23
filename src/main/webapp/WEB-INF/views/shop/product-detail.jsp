@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="pageTitle" value="${product.name}"/>
 <%@ include file="/WEB-INF/views/layout/header.jspf" %>
 
@@ -9,7 +10,11 @@
             <div class="product-detail-image">
                 <c:choose>
                     <c:when test="${not empty product.imageUrl}">
-                        <img src="${product.imageUrl.startsWith('http') ? product.imageUrl : pageContext.request.contextPath.concat('/').concat(product.imageUrl)}" 
+                        <img src="${fn:startsWith(product.imageUrl, 'data:') 
+                                   ? product.imageUrl 
+                                   : (fn:startsWith(product.imageUrl, 'http') 
+                                        ? product.imageUrl 
+                                        : pageContext.request.contextPath.concat('/').concat(product.imageUrl))}" 
                              alt="<c:out value="${product.name}"/>"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="img-placeholder" style="display:none;">&#127921;</div>
@@ -96,7 +101,11 @@
                             <div class="card-img-wrapper">
                                 <c:choose>
                                     <c:when test="${not empty p.imageUrl}">
-                                        <img src="${p.imageUrl.startsWith('http') ? p.imageUrl : pageContext.request.contextPath.concat('/').concat(p.imageUrl)}" 
+                                        <img src="${fn:startsWith(p.imageUrl, 'data:') 
+                                                   ? p.imageUrl 
+                                                   : (fn:startsWith(p.imageUrl, 'http') 
+                                                        ? p.imageUrl 
+                                                        : pageContext.request.contextPath.concat('/').concat(p.imageUrl))}" 
                                              class="card-img-top" alt="<c:out value="${p.name}"/>"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <div class="img-placeholder" style="display:none;">&#127921;</div>

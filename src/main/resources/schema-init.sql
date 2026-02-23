@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS products (
     description TEXT,
     price DECIMAL(15,2) NOT NULL,
     stock INT NOT NULL DEFAULT 0,
-    image_url VARCHAR(500),
+    image_url LONGTEXT,
     category_id INT,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_products_category FOREIGN KEY (category_id) REFERENCES categories(id)

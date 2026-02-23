@@ -102,7 +102,11 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty p.imageUrl}">
-                                        <img src="${p.imageUrl.startsWith('http') ? p.imageUrl : pageContext.request.contextPath.concat('/').concat(p.imageUrl)}" 
+                                        <img src="${fn:startsWith(p.imageUrl, 'data:') 
+                                                   ? p.imageUrl 
+                                                   : (fn:startsWith(p.imageUrl, 'http') 
+                                                        ? p.imageUrl 
+                                                        : pageContext.request.contextPath.concat('/').concat(p.imageUrl))}" 
                                              alt="<c:out value="${p.name}"/>" 
                                              style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.25rem;">
                                     </c:when>

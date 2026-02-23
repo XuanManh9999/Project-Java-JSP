@@ -14,10 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,15 +83,22 @@ public class AdminProductServlet extends HttpServlet {
 
         Part imagePart = req.getPart("image");
         if (imagePart != null && imagePart.getSize() > 0) {
-            String uploadsDir = getServletContext().getRealPath("/uploads");
-            File dir = new File(uploadsDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
+            try (InputStream is = imagePart.getInputStream();
+                 ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+                byte[] data = new byte[8192];
+                int nRead;
+                while ((nRead = is.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                byte[] imageBytes = buffer.toByteArray();
+                String base64 = Base64.getEncoder().encodeToString(imageBytes);
+                String contentType = imagePart.getContentType();
+                if (contentType == null || contentType.isBlank()) {
+                    contentType = "image/*";
+                }
+                String dataUrl = "data:" + contentType + ";base64," + base64;
+                product.setImageUrl(dataUrl);
             }
-            String fileName = System.currentTimeMillis() + "_" + imagePart.getSubmittedFileName();
-            File file = new File(dir, fileName);
-            imagePart.write(file.getAbsolutePath());
-            product.setImageUrl("uploads/" + fileName);
         }
 
         if (product.getId() == 0) {
